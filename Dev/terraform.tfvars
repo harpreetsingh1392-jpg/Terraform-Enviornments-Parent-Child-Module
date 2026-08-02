@@ -4,6 +4,11 @@ japnoor_rg = {
         location = "West US"
     }
 
+        rg2 = {
+        name = "harpreet_rg1"
+        location = "West US"
+    }
+
 }
 japnoorVnet = {
 
