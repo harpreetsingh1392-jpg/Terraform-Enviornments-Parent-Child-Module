@@ -1,0 +1,127 @@
+name: Terraform Azure CI-CD
+
+on:
+  pull_request:
+    branches:
+      - main
+
+  push:
+    branches:
+      - main
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+
+  # ==========================================
+  # TERRAFORM PLAN - Feature Branch / PR
+  # ==========================================
+  terraform-plan:
+
+    name: Terraform Plan
+
+    if: github.event_name == 'pull_request'
+
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ./Dev
+
+    steps:
+
+      # Checkout Repository
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+
+      # Install Terraform
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+
+      # Azure OIDC Login
+      - name: Azure Login using OIDC
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+
+      # Terraform Init
+      - name: Terraform Init
+        run: terraform init -input=false
+
+
+      # Terraform Format
+      - name: Terraform Format Check
+        run: terraform fmt -check -recursive
+
+
+      # Terraform Validate
+      - name: Terraform Validate
+        run: terraform validate
+
+
+      # Terraform Plan
+      - name: Terraform Plan
+        run: terraform plan -input=false
+
+
+  # ==========================================
+  # TERRAFORM APPLY - MAIN BRANCH
+  # ==========================================
+  terraform-apply:
+
+    name: Terraform Apply
+
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ./Dev
+
+    steps:
+
+      # Checkout Repository
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+
+      # Install Terraform
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+
+      # Azure OIDC Login
+      - name: Azure Login using OIDC
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+
+      # Terraform Init
+      - name: Terraform Init
+        run: terraform init -input=false
+
+
+      # Terraform Format
+      - name: Terraform Format Check
+        run: terraform fmt -check -recursive
+
+
+      # Terraform Validate
+      - name: Terraform Validate
+        run: terraform validate
+
+
+      # Terraform Apply
+      - name: Terraform Apply
+        run: terraform apply -input=false -auto-approve

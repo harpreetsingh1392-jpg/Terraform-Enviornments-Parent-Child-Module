@@ -7,9 +7,9 @@ terraform {
   }
 
   backend "azurerm" {
-    resource_group_name = "harpreet_rg"
-    storage_account_name = "harpreetstorage"                             
-    container_name       = "harpreetcontainer"                               
+    resource_group_name = "japnoor_rg"
+    storage_account_name = "japnoorstorage"                             
+    container_name       = "japnoorcontainer"                               
     key                  = "modules.tfstate"                
   }
 }
