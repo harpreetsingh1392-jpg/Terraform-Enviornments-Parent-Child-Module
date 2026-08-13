@@ -16,14 +16,12 @@ permissions:
 jobs:
 
   # ==========================================
-  # TERRAFORM PLAN - Feature Branch / PR
+  # TERRAFORM PLAN - PULL REQUEST
   # ==========================================
+
   terraform-plan:
-
     name: Terraform Plan
-
     if: github.event_name == 'pull_request'
-
     runs-on: ubuntu-latest
 
     defaults:
@@ -32,15 +30,13 @@ jobs:
 
     steps:
 
-      # Checkout Repository
+      # Checkout Code
       - name: Checkout Code
         uses: actions/checkout@v4
 
-
-      # Install Terraform
+      # Setup Terraform
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
-
 
       # Azure OIDC Login
       - name: Azure Login using OIDC
@@ -50,21 +46,17 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-
       # Terraform Init
       - name: Terraform Init
         run: terraform init -input=false
-
 
       # Terraform Format
       - name: Terraform Format Check
         run: terraform fmt -check -recursive
 
-
       # Terraform Validate
       - name: Terraform Validate
         run: terraform validate
-
 
       # Terraform Plan
       - name: Terraform Plan
@@ -74,12 +66,10 @@ jobs:
   # ==========================================
   # TERRAFORM APPLY - MAIN BRANCH
   # ==========================================
+
   terraform-apply:
-
     name: Terraform Apply
-
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-
     runs-on: ubuntu-latest
 
     defaults:
@@ -88,15 +78,13 @@ jobs:
 
     steps:
 
-      # Checkout Repository
+      # Checkout Code
       - name: Checkout Code
         uses: actions/checkout@v4
 
-
-      # Install Terraform
+      # Setup Terraform
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
-
 
       # Azure OIDC Login
       - name: Azure Login using OIDC
@@ -106,21 +94,17 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-
       # Terraform Init
       - name: Terraform Init
         run: terraform init -input=false
-
 
       # Terraform Format
       - name: Terraform Format Check
         run: terraform fmt -check -recursive
 
-
       # Terraform Validate
       - name: Terraform Validate
         run: terraform validate
-
 
       # Terraform Apply
       - name: Terraform Apply
